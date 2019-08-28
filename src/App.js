@@ -1,40 +1,42 @@
 import React from 'react';
 import './App.css';
 
-class Square extends React.Component {
-  render () {
-    return (
-      <button className='square' 
-        onClick={this.props.onClick} >
-        {this.props.value}
-      </button>
-    )
-  }
-}
+const Square = (props) => (
+  <button className='square' 
+    onClick={props.onClick} >
+    {props.value}
+  </button>
+)
 
 class Board extends React.Component {
   state = {
-    squares: Array(9).fill(null)
+    squares: Array(9).fill(null),
+    xIsNext: true
   }
 
   handleClick = (i) => {
-    this.setState(prevState => ({
-      squares: [...prevState.squares, 'x']
-    })
+    this.setState(prevState => {
+      let newSquares = [...prevState.squares];
+      newSquares[i] = prevState.xIsNext ? 'x' : 'o';
+      return {squares: newSquares, xIsNext: !prevState.xIsNext}
+      }
     )
   }
 
   renderSquare = (i) => {
     return (
-    <Square value={this.state.squares}
+    <Square value={this.state.squares[i]}
       onClick={() => this.handleClick(i)}
     />)
   }
 
   render() {
 
+    let winner = calculateWinner(this.state.squares);
+
     return (
       <div className='board'>
+        <div className='winner'>{winner ? `The winner is: ${winner}` : 'continue playing'}</div>
         <div className='board-row'>
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -73,6 +75,26 @@ class App extends React.Component {
       </div>
     );
   }
+}
+
+const calculateWinner = (arr) => {
+  const lines = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+  ]
+  for (let i=0; i<lines.length; i++) {
+    const [a,b,c] = lines[i];
+    if (arr[a] && arr[a] === arr[b] && arr[a] === arr[c]) {
+      return arr[a]
+    }
+  }
+  return null;
 }
 
 export default App;
