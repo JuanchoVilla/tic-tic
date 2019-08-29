@@ -60,7 +60,7 @@ class Board extends React.Component {
 class Game extends React.Component {
   render() {
     return (
-      <div>
+      <div className='tic'>
         <Board/>
       </div>
     )
@@ -71,6 +71,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <Game/>
+        <Game/>
         <Game/>
       </div>
     );
