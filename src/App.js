@@ -11,14 +11,22 @@ const Square = (props) => (
 class Board extends React.Component {
   state = {
     squares: Array(9).fill(null),
-    xIsNext: true
+    xIsNext: true,
+    gameOver: false,
+    id: this.props.id,
+    winner: null
   }
-
   handleClick = (i) => {
     this.setState(prevState => {
+      let gameOver = calculateWinner(prevState.squares);
+      if (gameOver) {
+        return {gameOver: true}
+      }
       let newSquares = [...prevState.squares];
-      newSquares[i] = prevState.xIsNext ? 'x' : 'o';
-      return {squares: newSquares, xIsNext: !prevState.xIsNext}
+      if (newSquares[i] === null) {
+        newSquares[i] = prevState.xIsNext ? 'x' : 'o';
+        return {squares: newSquares, xIsNext: !prevState.xIsNext}
+      }
       }
     )
   }
@@ -31,12 +39,8 @@ class Board extends React.Component {
   }
 
   render() {
-
-    let winner = calculateWinner(this.state.squares);
-
     return (
       <div className='board'>
-        <div className='winner'>{winner ? `The winner is: ${winner}` : 'continue playing'}</div>
         <div className='board-row'>
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -57,11 +61,65 @@ class Board extends React.Component {
   }
 }
 
+class MiniGame extends React.Component {
+  state = {
+    boards: Array(9).fill(null),
+    xIsNext: true
+  }
+
+  componentDidUpdate() {
+    this.setState(prevState => ({xIsNext: !prevState.xIsNext}))
+  }
+
+  handleClick = (i) => {
+    console.log('Something was clicked');
+  }
+  
+  renderBoard = (i) => (
+    <Board id='i' onUpdate={() => this.handleClick(i)}/>
+  )
+  
+  render() {
+
+    let status = null
+    let winner = calculateWinner(this.state.boards);
+    let p = this.state.xIsNext ? 'x' : 'o';
+    
+    if (!winner) {
+        status = <p>Go player: {p}</p>
+    } else {
+        status = <p>{winner} wins!!</p>
+    }
+
+
+    return (
+      <div>
+        <div className='status'>{status}</div>
+        <div className='game-row'>
+          {this.renderBoard(0)}
+          {this.renderBoard(1)}
+          {this.renderBoard(2)}
+        </div>
+        <div className='game-row'>
+          {this.renderBoard(3)}
+          {this.renderBoard(4)}
+          {this.renderBoard(5)}
+        </div>
+        <div className='game-row'>
+          {this.renderBoard(6)}
+          {this.renderBoard(7)}
+          {this.renderBoard(8)}
+        </div>
+      </div>
+    )
+  }
+}
+
 class Game extends React.Component {
   render() {
     return (
-      <div className='tic'>
-        <Board/>
+      <div>
+        <MiniGame/>
       </div>
     )
   }
@@ -71,8 +129,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Game/>
-        <Game/>
         <Game/>
       </div>
     );
@@ -95,6 +151,9 @@ const calculateWinner = (arr) => {
     if (arr[a] && arr[a] === arr[b] && arr[a] === arr[c]) {
       return arr[a]
     }
+  }
+  if (!arr.includes(null)) {
+    return 'd'
   }
   return null;
 }
