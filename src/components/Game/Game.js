@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 import Board from '../Board/Board';
 import calculateWinner from '../../helpers/functions/calculateWinner';
@@ -6,11 +7,6 @@ import calculateWinner from '../../helpers/functions/calculateWinner';
 class Game extends React.Component {
   state = {
     boards: Array(9).fill(null),
-    xIsNext: true
-  }
-
-  componentDidUpdate() {
-    this.setState(prevState => ({xIsNext: !prevState.xIsNext}))
   }
 
   handleClick = (i) => {
@@ -25,7 +21,7 @@ class Game extends React.Component {
 
     let status = null;
     let winner = calculateWinner(this.state.boards);
-    let p = this.state.xIsNext ? 'x' : 'o';
+    let p = this.props.xIsNext ? 'x' : 'o';
     
     if (!winner) {
         status = <p>Go player: {p}</p>
@@ -56,4 +52,10 @@ class Game extends React.Component {
   }
 }
 
-export default Game;
+const mapStateToProps = state => (
+  {
+    xIsNext: state.xIsNext
+  }
+)
+
+export default connect(mapStateToProps)(Game);

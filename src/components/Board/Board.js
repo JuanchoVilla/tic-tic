@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 import Square from '../Square/Square';
 import calculateWinner from '../../helpers/functions/calculateWinner';
@@ -18,13 +19,9 @@ class Board extends React.Component {
       if (gameOver) {
         return {gameOver: true}
       }
-      let newSquares = [...prevState.squares];
-      if (newSquares[i] === null) {
-        newSquares[i] = prevState.xIsNext ? 'x' : 'o';
-        return {squares: newSquares, xIsNext: !prevState.xIsNext}
-      }
       }
     )
+    this.props.onChangeTurn(i)
   }
 
   renderSquare = (i) => {
@@ -57,4 +54,10 @@ class Board extends React.Component {
   }
 }
 
-export default Board;
+const mapDispatchToProps = dispatch => (
+  {
+    onChangeTurn: (event) => dispatch({type: 'CHANGE_TURN', event: event})
+  }
+)
+
+export default connect(null, mapDispatchToProps)(Board);
