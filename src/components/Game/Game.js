@@ -8,13 +8,9 @@ class Game extends React.Component {
   state = {
     boards: Array(9).fill(null),
   }
-
-  handleClick = (i) => {
-    console.log('Something was clicked');
-  }
   
   renderBoard = (i) => (
-    <Board id={i} onUpdate={() => this.handleClick(i)}/>
+    <Board id={i}/>
   )
   
   render() {

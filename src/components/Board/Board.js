@@ -7,7 +7,6 @@ import calculateWinner from '../../helpers/functions/calculateWinner';
 class Board extends React.Component {
   state = {
     squares: Array(9).fill(null),
-    xIsNext: true,
     gameOver: false,
     id: this.props.id,
     winner: null
@@ -16,18 +15,20 @@ class Board extends React.Component {
   handleClick = (i) => {
     this.setState(prevState => {
       let gameOver = calculateWinner(prevState.squares);
-      if (gameOver) {
-        return {gameOver: true}
-      }
+        if (gameOver) {
+          return {gameOver: true}
+        }
       }
     )
-    this.props.onChangeTurn(i)
+
+    this.props.onChangeTurn(i, this.state.id)
   }
 
-  renderSquare = (i) => {
+  renderSquare = (i, boardId) => {
     return (
     <Square value={this.state.squares[i]}
       onClick={() => this.handleClick(i)}
+      id={boardId}
     />)
   }
 
@@ -35,19 +36,19 @@ class Board extends React.Component {
     return (
       <div className='board'>
         <div className='board-row'>
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+          {this.renderSquare(0, this.state.id)}
+          {this.renderSquare(1, this.state.id)}
+          {this.renderSquare(2, this.state.id)}
         </div>
         <div className='board-row'>
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
+          {this.renderSquare(3, this.state.id)}
+          {this.renderSquare(4, this.state.id)}
+          {this.renderSquare(5, this.state.id)}
         </div>
         <div className='board-row'>
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
+          {this.renderSquare(6, this.state.id)}
+          {this.renderSquare(7, this.state.id)}
+          {this.renderSquare(8, this.state.id)}
         </div>
       </div>
     )
@@ -56,7 +57,7 @@ class Board extends React.Component {
 
 const mapDispatchToProps = dispatch => (
   {
-    onChangeTurn: (event) => dispatch({type: 'CHANGE_TURN', event: event})
+    onChangeTurn: (squareId, boardId) => dispatch({type: 'CHANGE_TURN', payload: {squareId: squareId, boardId: boardId}})
   }
 )
 
